@@ -4,31 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Museum Odyssey</title>
-
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="welcome-screen">
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.168.0/build/three.module.js';
 
-        <h1>Museum Odyssey</h1>
+const scene = new THREE.Scene();
 
-        <p class="subtitle">
-            An Interactive Educational Museum Experience
-        </p>
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
 
-        <p class="welcome-text">
-            Hello, you outstanding individual!
-        </p>
+const renderer = new THREE.WebGLRenderer();
 
-        <p class="question">
-            Wanna go study something in the Digital Museum?
-        </p>
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-        <button id="yeahBtn">YEAH</button>
+document.body.appendChild(renderer.domElement);
 
-    </div>
+camera.position.set(0, 2, 5);
 
-    <script src="script.js"></script>
+function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
+
+animate();
+</script>
+
 </body>
 </html>
