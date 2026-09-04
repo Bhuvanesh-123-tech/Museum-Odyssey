@@ -1,5 +1,7 @@
 import * as THREE from 'https://unpkg.com/three@0.168.0/build/three.module.js';
 
+const keys = {};
+
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
@@ -97,8 +99,23 @@ scene.add(wall4Bottom);
 camera.position.set(0, 2, 15);
 
 camera.lookAt(0, 2, 0);
+
+window.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+});
+
 function animate() {
     requestAnimationFrame(animate);
+
+    if (keys["w"]) camera.position.z -= 0.1;
+    if (keys["s"]) camera.position.z += 0.1;
+    if (keys["a"]) camera.position.x -= 0.1;
+    if (keys["d"]) camera.position.x += 0.1;
+
     renderer.render(scene, camera);
 }
 
