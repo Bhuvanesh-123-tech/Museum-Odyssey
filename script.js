@@ -99,7 +99,11 @@ scene.add(wall4Bottom);
 
 camera.position.set(0, 1.6, 15);
 
-camera.lookAt(0, 2, 0);
+let yaw = 0;
+
+document.addEventListener("mousemove", (e) => {
+    yaw -= e.movementX * 0.002;
+});
 
 window.addEventListener("keydown", (e) => {
     keys[e.key.toLowerCase()] = true;
@@ -112,10 +116,29 @@ window.addEventListener("keyup", (e) => {
 function animate() {
     requestAnimationFrame(animate);
 
-    if (keys["w"]) camera.position.z -= 0.1;
-    if (keys["s"]) camera.position.z += 0.1;
-    if (keys["a"]) camera.position.x -= 0.1;
-    if (keys["d"]) camera.position.x += 0.1;
+    camera.rotation.y = yaw;
+
+    const speed = 0.1;
+
+    if (keys["w"]) {
+        camera.position.x -= Math.sin(yaw) * speed;
+        camera.position.z -= Math.cos(yaw) * speed;
+    }
+
+    if (keys["s"]) {
+        camera.position.x += Math.sin(yaw) * speed;
+        camera.position.z += Math.cos(yaw) * speed;
+    }
+
+    if (keys["a"]) {
+        camera.position.x -= Math.cos(yaw) * speed;
+        camera.position.z += Math.sin(yaw) * speed;
+    }
+
+    if (keys["d"]) {
+        camera.position.x += Math.cos(yaw) * speed;
+        camera.position.z -= Math.sin(yaw) * speed;
+    }
 
     renderer.render(scene, camera);
 }
