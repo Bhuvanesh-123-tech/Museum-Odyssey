@@ -46,6 +46,46 @@ spawn.position.y = 0.5;
 
 scene.add(spawn);
 
+const wallMaterial = new THREE.MeshBasicMaterial({
+    color: 0x444444
+});
+
+const wall1 = new THREE.Mesh(
+    new THREE.BoxGeometry(100, 8, 1),
+    wallMaterial
+);
+
+wall1.position.set(0, 4, -30);
+
+scene.add(wall1);
+
+const wall2 = new THREE.Mesh(
+    new THREE.BoxGeometry(100, 8, 1),
+    wallMaterial
+);
+
+wall2.position.set(0, 4, 30);
+
+scene.add(wall2);
+
+const wall3 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 8, 60),
+    wallMaterial
+);
+
+wall3.position.set(-50, 4, 0);
+
+scene.add(wall3);
+
+const wall4 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 8, 60),
+    wallMaterial
+);
+
+wall4.position.set(50, 4, 0);
+
+scene.add(wall4);
+
 camera.position.set(0, 30, 20);
 
 camera.lookAt(0, 0, 0);
