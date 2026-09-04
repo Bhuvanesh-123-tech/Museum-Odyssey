@@ -1,43 +1,4 @@
 body{
     margin:0;
-    height:100vh;
     overflow:hidden;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    background:#111;
-    color:white;
-
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-.welcome-screen{
-    text-align:center;
-}
-
-h1{
-    font-size:4rem;
-    margin-bottom:10px;
-}
-
-.subtitle{
-    opacity:0.8;
-    margin-bottom:30px;
-}
-
-.welcome-text{
-    font-size:1.3rem;
-}
-
-.question{
-    font-size:1.2rem;
-    margin-bottom:25px;
-}
-
-button{
-    padding:15px 40px;
-    font-size:1.2rem;
-    cursor:pointer;
 }
