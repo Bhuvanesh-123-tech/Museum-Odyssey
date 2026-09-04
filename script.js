@@ -100,9 +100,21 @@ scene.add(wall4Bottom);
 camera.position.set(0, 1.6, 15);
 
 let yaw = 0;
+let pitch = 0;
 
 document.addEventListener("mousemove", (e) => {
+
+    if (document.pointerLockElement !== document.body) return;
+
     yaw -= e.movementX * 0.002;
+
+    pitch -= e.movementY * 0.002;
+
+    pitch = Math.max(
+        -Math.PI / 2,
+        Math.min(Math.PI / 2, pitch)
+    );
+
 });
 
 window.addEventListener("keydown", (e) => {
@@ -113,10 +125,18 @@ window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
 });
 
+document.addEventListener("click", () => {
+    document.body.requestPointerLock();
+});
+
 function animate() {
     requestAnimationFrame(animate);
 
-    camera.rotation.y = yaw;
+   camera.rotation.order = "YXZ";
+
+camera.rotation.y = yaw;
+
+camera.rotation.x = pitch;
 
     const speed = 0.1;
 
