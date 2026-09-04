@@ -96,7 +96,8 @@ const wall4Bottom = new THREE.Mesh(
 wall4Bottom.position.set(50, 4, 20);
 
 scene.add(wall4Bottom);
-camera.position.set(0, 2, 15);
+
+camera.position.set(0, 1.6, 15);
 
 camera.lookAt(0, 2, 0);
 
