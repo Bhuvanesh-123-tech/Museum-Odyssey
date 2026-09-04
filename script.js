@@ -31,6 +31,21 @@ floor.rotation.x = -Math.PI / 2;
 
 scene.add(floor);
 
+const spawnGeometry = new THREE.BoxGeometry(25, 1, 15);
+
+const spawnMaterial = new THREE.MeshBasicMaterial({
+    color: 0x999999
+});
+
+const spawn = new THREE.Mesh(
+    spawnGeometry,
+    spawnMaterial
+);
+
+spawn.position.y = 0.5;
+
+scene.add(spawn);
+
 camera.position.set(0, 30, 20);
 
 camera.lookAt(0, 0, 0);
