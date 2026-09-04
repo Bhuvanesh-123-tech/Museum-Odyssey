@@ -15,7 +15,25 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
 
-camera.position.set(0, 2, 5);
+const floorGeometry = new THREE.PlaneGeometry(100, 60);
+
+const floorMaterial = new THREE.MeshBasicMaterial({
+    color: 0x666666,
+    side: THREE.DoubleSide
+});
+
+const floor = new THREE.Mesh(
+    floorGeometry,
+    floorMaterial
+);
+
+floor.rotation.x = -Math.PI / 2;
+
+scene.add(floor);
+
+camera.position.set(0, 30, 20);
+
+camera.lookAt(0, 0, 0);
 
 function animate() {
     requestAnimationFrame(animate);
