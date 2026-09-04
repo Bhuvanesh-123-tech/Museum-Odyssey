@@ -77,15 +77,23 @@ wall3.position.set(-50, 4, 0);
 
 scene.add(wall3);
 
-const wall4 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 8, 60),
+const wall4Top = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 8, 20),
     wallMaterial
 );
 
-wall4.position.set(50, 4, 0);
+wall4Top.position.set(50, 4, -20);
 
-scene.add(wall4);
+scene.add(wall4Top);
 
+const wall4Bottom = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 8, 20),
+    wallMaterial
+);
+
+wall4Bottom.position.set(50, 4, 20);
+
+scene.add(wall4Bottom);
 camera.position.set(0, 30, 20);
 
 camera.lookAt(0, 0, 0);
