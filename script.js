@@ -20,7 +20,7 @@ document.body.appendChild(renderer.domElement);
 const floorGeometry = new THREE.PlaneGeometry(100, 60);
 
 const floorMaterial = new THREE.MeshBasicMaterial({
-    color: 0x666666,
+    color:0xbdbdbd
     side: THREE.DoubleSide
 });
 
@@ -33,69 +33,65 @@ floor.rotation.x = -Math.PI / 2;
 
 scene.add(floor);
 
-const spawnGeometry = new THREE.BoxGeometry(25, 1, 15);
-
-const spawnMaterial = new THREE.MeshBasicMaterial({
-    color: 0x999999
-});
-
-const spawn = new THREE.Mesh(
-    spawnGeometry,
-    spawnMaterial
-);
-
-spawn.position.y = 0.5;
-
-scene.add(spawn);
-
 const wallMaterial = new THREE.MeshBasicMaterial({
-    color: 0x444444
+    color: 0xffffff
 });
 
 const wall1 = new THREE.Mesh(
-    new THREE.BoxGeometry(100, 8, 1),
+    new THREE.BoxGeometry(100, 12, 1),
     wallMaterial
 );
 
-wall1.position.set(0, 4, -30);
+wall1.position.set(0, 6, -30);
 
 scene.add(wall1);
 
 const wall2 = new THREE.Mesh(
-    new THREE.BoxGeometry(100, 8, 1),
+    new THREE.BoxGeometry(100, 12, 1),
     wallMaterial
 );
 
-wall2.position.set(0, 4, 30);
+wall2.position.set(0, 6, 30);
 
 scene.add(wall2);
 
 const wall3 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 8, 60),
+    new THREE.BoxGeometry(1, 12, 60),
     wallMaterial
 );
 
-wall3.position.set(-50, 4, 0);
+wall3.position.set(-50, 6, 0);
 
 scene.add(wall3);
 
 const wall4Top = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 8, 20),
+    new THREE.BoxGeometry(1, 12, 20),
     wallMaterial
 );
 
-wall4Top.position.set(50, 4, -20);
+wall4Top.position.set(50, 6, -20);
 
 scene.add(wall4Top);
 
 const wall4Bottom = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 8, 20),
+    new THREE.BoxGeometry(1, 12, 20),
     wallMaterial
 );
 
-wall4Bottom.position.set(50, 4, 20);
+wall4Bottom.position.set(50, 6, 20);
 
 scene.add(wall4Bottom);
+
+const ceiling = new THREE.Mesh(
+    new THREE.BoxGeometry(100, 1, 60),
+    new THREE.MeshBasicMaterial({
+        color: 0x222222
+    })
+);
+
+ceiling.position.set(0, 12, 0);
+
+scene.add(ceiling);
 
 camera.position.set(0, 1.6, 15);
 
