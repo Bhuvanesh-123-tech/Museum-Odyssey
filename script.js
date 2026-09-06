@@ -89,6 +89,69 @@ ceiling.position.set(0, 12, 0);
 
 scene.add(ceiling);
 
+const ceilingRail = new THREE.Mesh(
+    new THREE.BoxGeometry(30, 0.4, 2),
+    new THREE.MeshBasicMaterial({
+        color: 0x181818
+    })
+);
+
+ceilingRail.position.set(0, 11.5, 0);
+
+scene.add(ceilingRail);
+
+const lightMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffe8b0
+});
+
+const lightPositions = [-12, -6, 0, 6, 12];
+
+lightPositions.forEach((x) => {
+
+    const cable = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 2),
+        new THREE.MeshBasicMaterial({
+            color: 0x111111
+        })
+    );
+
+    cable.position.set(x, 10.5, 0);
+
+    scene.add(cable);
+
+    const light = new THREE.Mesh(
+        new THREE.SphereGeometry(0.25, 16, 16),
+        lightMaterial
+    );
+
+    light.position.set(x, 9.5, 0);
+
+    scene.add(light);
+
+});
+
+const artFrame = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 5, 0.4),
+    new THREE.MeshBasicMaterial({
+        color: 0x3a2618
+    })
+);
+
+artFrame.position.set(-20, 4, -29.3);
+
+scene.add(artFrame);
+
+const artPanel = new THREE.Mesh(
+    new THREE.BoxGeometry(7.2, 4.2, 0.2),
+    new THREE.MeshBasicMaterial({
+        color: 0xf5eee3
+    })
+);
+
+artPanel.position.set(-20, 4, -29.05);
+
+scene.add(artPanel);
+
 camera.position.set(0, 1.6, 15);
 
 let yaw = 0;
