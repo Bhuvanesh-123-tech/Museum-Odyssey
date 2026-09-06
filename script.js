@@ -4,8 +4,6 @@ const keys = {};
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0xe9e4dc);
-
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -96,6 +94,15 @@ camera.position.set(0, 1.6, 15);
 let yaw = 0;
 let pitch = 0;
 
+const crosshair = document.getElementById("crosshair");
+
+function updateInterface() {
+    const playing = document.pointerLockElement === document.body;
+    crosshair.style.display = playing ? "block" : "none";
+}
+
+document.addEventListener("pointerlockchange", updateInterface);
+
 window.addEventListener("keydown", (e) => {
     keys[e.key.toLowerCase()] = true;
 });
@@ -185,6 +192,8 @@ function animate() {
 }
 
 animate();
+
+updateInterface();
 
 window.addEventListener("resize", () => {
 
