@@ -4,6 +4,8 @@ const keys = {};
 
 const scene = new THREE.Scene();
 
+scene.background = new THREE.Color(0xe9e4dc);
+
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -20,7 +22,7 @@ document.body.appendChild(renderer.domElement);
 const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 60),
     new THREE.MeshBasicMaterial({
-        color: 0xbdbdbd,
+        color: 0xd8c3a5,
         side: THREE.DoubleSide
     })
 );
@@ -30,7 +32,7 @@ floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
 const wallMaterial = new THREE.MeshBasicMaterial({
-    color: 0xe6e6e6
+    color: 0xfff8ee
 });
 
 const wall1 = new THREE.Mesh(
@@ -81,7 +83,7 @@ scene.add(wall4Bottom);
 const ceiling = new THREE.Mesh(
     new THREE.BoxGeometry(100, 1, 60),
     new THREE.MeshBasicMaterial({
-        color: 0x222222
+        color: 0x2b2b2b
     })
 );
 
