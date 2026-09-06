@@ -8,28 +8,37 @@
 </head>
 <body>
 
+<div id="welcomeScreen">
+    <div class="welcomeBox">
+        <h1>Museum Odyssey</h1>
+        <p class="welcomeSubtitle">An Interactive Learning Experience</p>
+        <p class="welcomeDescription">
+            Explore, discover, and learn across different fields of knowledge.
+        </p>
+        <button id="startButton">Enter Museum</button>
+    </div>
+</div>
+
 <div id="crosshair"></div>
 
 <div id="pauseMenu">
     <div class="menuBox">
         <h1>Museum Odyssey</h1>
-        <p>Game Paused</p>
+        <p>Learning Experience Paused</p>
         <button id="resumeButton">Resume</button>
         <button id="exitButton">Exit Museum</button>
     </div>
 </div>
 
+<div id="mobileControls">
+    <div id="joystick">
+        <div id="joystickKnob"></div>
+    </div>
+    <button id="mobileMenuButton">☰</button>
+    <button id="interactButton">Interact</button>
+</div>
+
 <script type="module" src="script.js"></script>
-
-<script>
-    document.getElementById("resumeButton").addEventListener("click", () => {
-        document.body.requestPointerLock();
-    });
-
-    document.getElementById("exitButton").addEventListener("click", () => {
-        window.location.href = "index.html";
-    });
-</script>
 
 </body>
 </html>
