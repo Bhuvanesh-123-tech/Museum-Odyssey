@@ -11,22 +11,18 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
 
-const floorGeometry = new THREE.PlaneGeometry(100, 60);
-
-const floorMaterial = new THREE.MeshBasicMaterial({
-    color:0xbdbdbd
-    side: THREE.DoubleSide
-});
-
 const floor = new THREE.Mesh(
-    floorGeometry,
-    floorMaterial
+    new THREE.PlaneGeometry(100, 60),
+    new THREE.MeshBasicMaterial({
+        color: 0xbdbdbd,
+        side: THREE.DoubleSide
+    })
 );
 
 floor.rotation.x = -Math.PI / 2;
@@ -34,7 +30,7 @@ floor.rotation.x = -Math.PI / 2;
 scene.add(floor);
 
 const wallMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff
+    color: 0xe6e6e6
 });
 
 const wall1 = new THREE.Mesh(
@@ -98,6 +94,18 @@ camera.position.set(0, 1.6, 15);
 let yaw = 0;
 let pitch = 0;
 
+window.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+});
+
+document.addEventListener("click", () => {
+    document.body.requestPointerLock();
+});
+
 document.addEventListener("mousemove", (e) => {
 
     if (document.pointerLockElement !== document.body) return;
@@ -113,50 +121,79 @@ document.addEventListener("mousemove", (e) => {
 
 });
 
-window.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = true;
-});
-
-window.addEventListener("keyup", (e) => {
-    keys[e.key.toLowerCase()] = false;
-});
-
-document.addEventListener("click", () => {
-    document.body.requestPointerLock();
-});
-
 function animate() {
+
     requestAnimationFrame(animate);
 
-   camera.rotation.order = "YXZ";
+    const playing =
+        document.pointerLockElement === document.body;
 
-camera.rotation.y = yaw;
+    camera.rotation.order = "YXZ";
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
 
-camera.rotation.x = pitch;
+    if (playing) {
 
-    const speed = 0.1;
+        const speed = 0.1;
 
-    if (keys["w"]) {
-        camera.position.x -= Math.sin(yaw) * speed;
-        camera.position.z -= Math.cos(yaw) * speed;
-    }
+        let newX = camera.position.x;
+        let newZ = camera.position.z;
 
-    if (keys["s"]) {
-        camera.position.x += Math.sin(yaw) * speed;
-        camera.position.z += Math.cos(yaw) * speed;
-    }
+        if (keys["w"]) {
+            newX -= Math.sin(yaw) * speed;
+            newZ -= Math.cos(yaw) * speed;
+        }
 
-    if (keys["a"]) {
-        camera.position.x -= Math.cos(yaw) * speed;
-        camera.position.z += Math.sin(yaw) * speed;
-    }
+        if (keys["s"]) {
+            newX += Math.sin(yaw) * speed;
+            newZ += Math.cos(yaw) * speed;
+        }
 
-    if (keys["d"]) {
-        camera.position.x += Math.cos(yaw) * speed;
-        camera.position.z -= Math.sin(yaw) * speed;
+        if (keys["a"]) {
+            newX -= Math.cos(yaw) * speed;
+            newZ += Math.sin(yaw) * speed;
+        }
+
+        if (keys["d"]) {
+            newX += Math.cos(yaw) * speed;
+            newZ -= Math.sin(yaw) * speed;
+        }
+
+        const insideMuseum =
+            newX > -49 &&
+            newX < 49 &&
+            newZ > -29 &&
+            newZ < 29;
+
+        const inExit =
+            newX > 49 &&
+            newX < 60 &&
+            newZ > -10 &&
+            newZ < 10;
+
+        if (insideMuseum || inExit) {
+            camera.position.x = newX;
+            camera.position.z = newZ;
+        }
+
     }
 
     renderer.render(scene, camera);
+
 }
 
 animate();
+
+window.addEventListener("resize", () => {
+
+    camera.aspect =
+        window.innerWidth / window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+});
