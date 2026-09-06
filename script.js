@@ -3,7 +3,7 @@ import * as THREE from 'https://unpkg.com/three@0.168.0/build/three.module.js';
 const keys = {};
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xded9d0);
+scene.background = new THREE.Color(0x000000);
 
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -12,19 +12,24 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000);
 
 document.body.appendChild(renderer.domElement);
 
+const floorMaterial = new THREE.MeshBasicMaterial({
+    color: 0xd8c3a5,
+    side: THREE.DoubleSide
+});
+
 const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 60),
-    new THREE.MeshBasicMaterial({
-        color: 0xd8c3a5,
-        side: THREE.DoubleSide
-    })
+    floorMaterial
 );
 
 floor.rotation.x = -Math.PI / 2;
@@ -73,6 +78,14 @@ const wall4Bottom = new THREE.Mesh(
 
 wall4Bottom.position.set(50, 6, 20);
 scene.add(wall4Bottom);
+
+const wall4AboveExit = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 4, 20),
+    wallMaterial
+);
+
+wall4AboveExit.position.set(50, 10, 0);
+scene.add(wall4AboveExit);
 
 const ceiling = new THREE.Mesh(
     new THREE.BoxGeometry(100, 1, 60),
@@ -144,49 +157,117 @@ artPanel.position.set(-49.05, 4, 0);
 artPanel.rotation.y = Math.PI / 2;
 scene.add(artPanel);
 
-const doorFrameMaterial = new THREE.MeshBasicMaterial({
-    color: 0x3a2618
+const doorMaterial = new THREE.MeshBasicMaterial({
+    color: 0x6b4328
 });
 
-const doorLeft = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, 8, 0.6),
-    doorFrameMaterial
+const door = new THREE.Mesh(
+    new THREE.BoxGeometry(0.35, 7, 19),
+    doorMaterial
 );
 
-doorLeft.position.set(49.4, 4, -10);
+door.position.set(49.15, 3.5, 0);
+scene.add(door);
+
+const doorOpening = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 7, 18),
+    new THREE.MeshBasicMaterial({
+        color: 0x000000
+    })
+);
+
+doorOpening.position.set(49.35, 3.5, 0);
+scene.add(doorOpening);
+
+const doorTop = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 0.5, 20),
+    new THREE.MeshBasicMaterial({
+        color: 0x3a2618
+    })
+);
+
+doorTop.position.set(49.2, 7.2, 0);
+scene.add(doorTop);
+
+const doorLeft = new THREE.Mesh(
+    new THREE.BoxGeometry(0.7, 7.2, 0.5),
+    new THREE.MeshBasicMaterial({
+        color: 0x3a2618
+    })
+);
+
+doorLeft.position.set(49.2, 3.6, -10);
 scene.add(doorLeft);
 
 const doorRight = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, 8, 0.6),
-    doorFrameMaterial
+    new THREE.BoxGeometry(0.7, 7.2, 0.5),
+    new THREE.MeshBasicMaterial({
+        color: 0x3a2618
+    })
 );
 
-doorRight.position.set(49.4, 4, 10);
+doorRight.position.set(49.2, 3.6, 10);
 scene.add(doorRight);
 
-const doorTop = new THREE.Mesh(
-    new THREE.BoxGeometry(0.6, 0.6, 20),
-    doorFrameMaterial
-);
-
-doorTop.position.set(49.4, 8, 0);
-scene.add(doorTop);
-
 const crosshair = document.getElementById("crosshair");
-const menu = document.getElementById("pauseMenu");
+const welcomeScreen = document.getElementById("welcomeScreen");
+const pauseMenu = document.getElementById("pauseMenu");
+const startButton = document.getElementById("startButton");
+const resumeButton = document.getElementById("resumeButton");
+const exitButton = document.getElementById("exitButton");
 
 let yaw = 0;
 let pitch = 0;
+let experienceStarted = false;
+
+const playerRadius = 0.45;
 
 function updateInterface() {
 
     const playing =
         document.pointerLockElement === document.body;
 
-    crosshair.style.display = playing ? "block" : "none";
-    menu.style.display = playing ? "none" : "flex";
+    crosshair.style.display =
+        playing ? "block" : "none";
+
+    pauseMenu.style.display =
+        experienceStarted && !playing ? "flex" : "none";
 
 }
+
+function startExperience() {
+
+    experienceStarted = true;
+    welcomeScreen.style.display = "none";
+    camera.position.set(0, 1.6, 15);
+    yaw = 0;
+    pitch = 0;
+    document.body.requestPointerLock();
+
+}
+
+startButton.addEventListener("click", startExperience);
+
+resumeButton.addEventListener("click", () => {
+    document.body.requestPointerLock();
+});
+
+exitButton.addEventListener("click", () => {
+
+    document.exitPointerLock();
+
+    experienceStarted = false;
+
+    pauseMenu.style.display = "none";
+    crosshair.style.display = "none";
+    welcomeScreen.style.display = "flex";
+
+    camera.position.set(0, 1.6, 15);
+
+    yaw = 0;
+    pitch = 0;
+
+});
 
 document.addEventListener("pointerlockchange", updateInterface);
 
@@ -195,23 +276,17 @@ window.addEventListener("keydown", (e) => {
     keys[e.key.toLowerCase()] = true;
 
     if (e.key === "Escape") {
+
         Object.keys(keys).forEach((key) => {
             keys[key] = false;
         });
+
     }
 
 });
 
 window.addEventListener("keyup", (e) => {
     keys[e.key.toLowerCase()] = false;
-});
-
-document.addEventListener("click", (e) => {
-
-    if (e.target.closest("#pauseMenu")) return;
-
-    document.body.requestPointerLock();
-
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -228,14 +303,19 @@ document.addEventListener("mousemove", (e) => {
 
 });
 
-const playerRadius = 0.45;
-
 function canMove(x, z) {
 
-    if (x < -49 + playerRadius) return false;
+    if (x < -49 + playerRadius) {
+        return false;
+    }
 
-    if (z < -29 + playerRadius) return false;
-    if (z > 29 - playerRadius) return false;
+    if (z < -29 + playerRadius) {
+        return false;
+    }
+
+    if (z > 29 - playerRadius) {
+        return false;
+    }
 
     if (x > 49 - playerRadius) {
 
@@ -310,10 +390,7 @@ function animate() {
 
 }
 
-camera.position.set(0, 1.6, 15);
-
 animate();
-updateInterface();
 
 window.addEventListener("resize", () => {
 
