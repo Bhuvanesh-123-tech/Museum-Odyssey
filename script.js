@@ -146,6 +146,50 @@ artFrame.position.set(-49.3, 4, 0);
 artFrame.rotation.y = Math.PI / 2;
 scene.add(artFrame);
 
+const artFrameLeft = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 5, 0.4),
+    new THREE.MeshBasicMaterial({
+        color: 0x3a2618
+    })
+);
+
+artFrameLeft.position.set(-49.3, 4, -11);
+artFrameLeft.rotation.y = Math.PI / 2;
+scene.add(artFrameLeft);
+
+const artPanelLeft = new THREE.Mesh(
+    new THREE.BoxGeometry(7.2, 4.2, 0.2),
+    new THREE.MeshBasicMaterial({
+        color: 0xf5eee3
+    })
+);
+
+artPanelLeft.position.set(-49.05, 4, -11);
+artPanelLeft.rotation.y = Math.PI / 2;
+scene.add(artPanelLeft);
+
+const artFrameRight = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 5, 0.4),
+    new THREE.MeshBasicMaterial({
+        color: 0x3a2618
+    })
+);
+
+artFrameRight.position.set(-49.3, 4, 11);
+artFrameRight.rotation.y = Math.PI / 2;
+scene.add(artFrameRight);
+
+const artPanelRight = new THREE.Mesh(
+    new THREE.BoxGeometry(7.2, 4.2, 0.2),
+    new THREE.MeshBasicMaterial({
+        color: 0xf5eee3
+    })
+);
+
+artPanelRight.position.set(-49.05, 4, 11);
+artPanelRight.rotation.y = Math.PI / 2;
+scene.add(artPanelRight);
+
 const artPanel = new THREE.Mesh(
     new THREE.BoxGeometry(7.2, 4.2, 0.2),
     new THREE.MeshBasicMaterial({
