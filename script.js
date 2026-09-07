@@ -135,71 +135,35 @@ lightPositions.forEach((x) => {
 
 });
 
-const artFrame = new THREE.Mesh(
-    new THREE.BoxGeometry(8, 5, 0.4),
-    new THREE.MeshBasicMaterial({
-        color: 0x3a2618
-    })
-);
+function createPortrait(z) {
 
-artFrame.position.set(-49.3, 4, 0);
-artFrame.rotation.y = Math.PI / 2;
-scene.add(artFrame);
+    const frame = new THREE.Mesh(
+        new THREE.BoxGeometry(8, 5, 0.4),
+        new THREE.MeshBasicMaterial({
+            color: 0x3a2618
+        })
+    );
 
-const artFrameLeft = new THREE.Mesh(
-    new THREE.BoxGeometry(8, 5, 0.4),
-    new THREE.MeshBasicMaterial({
-        color: 0x3a2618
-    })
-);
+    frame.position.set(-49.3, 4, z);
+    frame.rotation.y = Math.PI / 2;
+    scene.add(frame);
 
-artFrameLeft.position.set(-49.3, 4, -11);
-artFrameLeft.rotation.y = Math.PI / 2;
-scene.add(artFrameLeft);
+    const panel = new THREE.Mesh(
+        new THREE.BoxGeometry(7.2, 4.2, 0.2),
+        new THREE.MeshBasicMaterial({
+            color: 0xf5eee3
+        })
+    );
 
-const artPanelLeft = new THREE.Mesh(
-    new THREE.BoxGeometry(7.2, 4.2, 0.2),
-    new THREE.MeshBasicMaterial({
-        color: 0xf5eee3
-    })
-);
+    panel.position.set(-49.05, 4, z);
+    panel.rotation.y = Math.PI / 2;
+    scene.add(panel);
 
-artPanelLeft.position.set(-49.05, 4, -11);
-artPanelLeft.rotation.y = Math.PI / 2;
-scene.add(artPanelLeft);
+}
 
-const artFrameRight = new THREE.Mesh(
-    new THREE.BoxGeometry(8, 5, 0.4),
-    new THREE.MeshBasicMaterial({
-        color: 0x3a2618
-    })
-);
-
-artFrameRight.position.set(-49.3, 4, 11);
-artFrameRight.rotation.y = Math.PI / 2;
-scene.add(artFrameRight);
-
-const artPanelRight = new THREE.Mesh(
-    new THREE.BoxGeometry(7.2, 4.2, 0.2),
-    new THREE.MeshBasicMaterial({
-        color: 0xf5eee3
-    })
-);
-
-artPanelRight.position.set(-49.05, 4, 11);
-artPanelRight.rotation.y = Math.PI / 2;
-scene.add(artPanelRight);
-
-const artPanel = new THREE.Mesh(
-    new THREE.BoxGeometry(7.2, 4.2, 0.2),
-    new THREE.MeshBasicMaterial({
-        color: 0xf5eee3
-    })
-);
-
-artPanel.position.set(-49.05, 4, 0);
-artPanel.rotation.y = Math.PI / 2;
-scene.add(artPanel);
+createPortrait(-11);
+createPortrait(0);
+createPortrait(11);
 
 const doorMaterial = new THREE.MeshBasicMaterial({
     color: 0x6b4328
@@ -253,12 +217,97 @@ const doorRight = new THREE.Mesh(
 doorRight.position.set(49.2, 3.6, 10);
 scene.add(doorRight);
 
+const books = [];
+
+function createBook(x, z, title, color) {
+
+    const group = new THREE.Group();
+
+    const stand = new THREE.Mesh(
+        new THREE.BoxGeometry(3.5, 0.5, 2.5),
+        new THREE.MeshBasicMaterial({
+            color: 0x4b3828
+        })
+    );
+
+    stand.position.y = 0.25;
+    group.add(stand);
+
+    const book = new THREE.Mesh(
+        new THREE.BoxGeometry(2.2, 2.8, 0.55),
+        new THREE.MeshBasicMaterial({
+            color: color
+        })
+    );
+
+    book.position.y = 1.9;
+    group.add(book);
+
+    const spine = new THREE.Mesh(
+        new THREE.BoxGeometry(0.25, 2.8, 0.65),
+        new THREE.MeshBasicMaterial({
+            color: 0x222222
+        })
+    );
+
+    spine.position.set(-1.13, 1.9, 0);
+    group.add(spine);
+
+    const labelCanvas = document.createElement("canvas");
+    labelCanvas.width = 512;
+    labelCanvas.height = 128;
+
+    const context = labelCanvas.getContext("2d");
+
+    context.fillStyle = "#fff8ee";
+    context.fillRect(0, 0, 512, 128);
+
+    context.fillStyle = "#222222";
+    context.font = "bold 38px Arial";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(title, 256, 64);
+
+    const texture = new THREE.CanvasTexture(labelCanvas);
+
+    const label = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.8, 0.95),
+        new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true
+        })
+    );
+
+    label.position.set(0, 4.1, 0);
+    group.add(label);
+
+    group.position.set(x, 0, z);
+
+    scene.add(group);
+
+    books.push({
+        object: book,
+        title: title
+    });
+
+}
+
+createBook(-30, -18, "MATHEMATICS", 0x4169a1);
+createBook(-30, 0, "SCIENCE", 0x3f8f62);
+createBook(-30, 18, "SOCIAL SCIENCE", 0x9b633f);
+
+createBook(10, -22, "ENGLISH", 0x7b4fa3);
+createBook(10, 0, "COMPUTER SCIENCE", 0x3c7f91);
+createBook(10, 22, "ART & CULTURE", 0xb05b55);
+
 const crosshair = document.getElementById("crosshair");
 const welcomeScreen = document.getElementById("welcomeScreen");
 const pauseMenu = document.getElementById("pauseMenu");
 const startButton = document.getElementById("startButton");
 const resumeButton = document.getElementById("resumeButton");
 const exitButton = document.getElementById("exitButton");
+const mobileMenuButton = document.getElementById("mobileMenuButton");
+const interactButton = document.getElementById("interactButton");
 
 let yaw = 0;
 let pitch = 0;
@@ -282,10 +331,14 @@ function updateInterface() {
 function startExperience() {
 
     experienceStarted = true;
+
     welcomeScreen.style.display = "none";
+
     camera.position.set(0, 1.6, 15);
+
     yaw = 0;
     pitch = 0;
+
     document.body.requestPointerLock();
 
 }
@@ -310,6 +363,14 @@ exitButton.addEventListener("click", () => {
 
     yaw = 0;
     pitch = 0;
+
+});
+
+mobileMenuButton.addEventListener("click", () => {
+
+    if (experienceStarted) {
+        document.exitPointerLock();
+    }
 
 });
 
@@ -338,6 +399,7 @@ document.addEventListener("mousemove", (e) => {
     if (document.pointerLockElement !== document.body) return;
 
     yaw -= e.movementX * 0.002;
+
     pitch -= e.movementY * 0.002;
 
     pitch = Math.max(
@@ -388,6 +450,33 @@ function movePlayer(dx, dz) {
 
 }
 
+const raycaster = new THREE.Raycaster();
+
+function checkBookInteraction() {
+
+    if (!experienceStarted) return;
+
+    raycaster.setFromCamera(
+        new THREE.Vector2(0, 0),
+        camera
+    );
+
+    const objects = books.map(book => book.object);
+
+    const hits = raycaster.intersectObjects(objects);
+
+    if (hits.length > 0 && hits[0].distance < 6) {
+
+        interactButton.style.display = "block";
+
+    } else {
+
+        interactButton.style.display = "none";
+
+    }
+
+}
+
 function animate() {
 
     requestAnimationFrame(animate);
@@ -396,6 +485,7 @@ function animate() {
         document.pointerLockElement === document.body;
 
     camera.rotation.order = "YXZ";
+
     camera.rotation.y = yaw;
     camera.rotation.x = pitch;
 
@@ -407,34 +497,47 @@ function animate() {
         let dz = 0;
 
         if (keys["w"]) {
+
             dx -= Math.sin(yaw) * speed;
             dz -= Math.cos(yaw) * speed;
+
         }
 
         if (keys["s"]) {
+
             dx += Math.sin(yaw) * speed;
             dz += Math.cos(yaw) * speed;
+
         }
 
         if (keys["a"]) {
+
             dx -= Math.cos(yaw) * speed;
             dz += Math.sin(yaw) * speed;
+
         }
 
         if (keys["d"]) {
+
             dx += Math.cos(yaw) * speed;
             dz -= Math.sin(yaw) * speed;
+
         }
 
         movePlayer(dx, dz);
 
     }
 
+    checkBookInteraction();
+
     renderer.render(scene, camera);
 
 }
 
+camera.position.set(0, 1.6, 15);
+
 animate();
+updateInterface();
 
 window.addEventListener("resize", () => {
 
