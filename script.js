@@ -22,14 +22,12 @@ renderer.setClearColor(0x000000);
 
 document.body.appendChild(renderer.domElement);
 
-const floorMaterial = new THREE.MeshBasicMaterial({
-    color: 0xd8c3a5,
-    side: THREE.DoubleSide
-});
-
 const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 60),
-    floorMaterial
+    new THREE.MeshBasicMaterial({
+        color: 0xd8c3a5,
+        side: THREE.DoubleSide
+    })
 );
 
 floor.rotation.x = -Math.PI / 2;
@@ -161,9 +159,9 @@ function createPortrait(z) {
 
 }
 
-createPortrait(-11);
+createPortrait(-15);
 createPortrait(0);
-createPortrait(11);
+createPortrait(15);
 
 const doorMaterial = new THREE.MeshBasicMaterial({
     color: 0x6b4328
@@ -219,41 +217,43 @@ scene.add(doorRight);
 
 const books = [];
 
-function createBook(x, z, title, color) {
+function createBook(x, z, title, color, rotationY) {
 
     const group = new THREE.Group();
 
-    const stand = new THREE.Mesh(
-        new THREE.BoxGeometry(3.5, 0.5, 2.5),
-        new THREE.MeshBasicMaterial({
-            color: 0x4b3828
-        })
-    );
-
-    stand.position.y = 0.25;
-    group.add(stand);
-
     const book = new THREE.Mesh(
-        new THREE.BoxGeometry(2.2, 2.8, 0.55),
+        new THREE.BoxGeometry(2.4, 3.2, 0.7),
         new THREE.MeshBasicMaterial({
             color: color
         })
     );
 
-    book.position.y = 1.9;
+    book.position.y = 2.4;
+
     group.add(book);
 
     const spine = new THREE.Mesh(
-        new THREE.BoxGeometry(0.25, 2.8, 0.65),
+        new THREE.BoxGeometry(0.3, 3.2, 0.8),
         new THREE.MeshBasicMaterial({
-            color: 0x222222
+            color: 0x21150f
         })
     );
 
-    spine.position.set(-1.13, 1.9, 0);
+    spine.position.set(-1.25, 2.4, 0);
     group.add(spine);
 
+    const cover = new THREE.Mesh(
+        new THREE.BoxGeometry(2.5, 0.12, 0.82),
+        new THREE.MeshBasicMaterial({
+            color: 0xf3e4c8
+        })
+    );
+
+    cover.position.set(0, 4.03, 0);
+    group.add(cover);
+
     const labelCanvas = document.createElement("canvas");
+
     labelCanvas.width = 512;
     labelCanvas.height = 128;
 
@@ -271,49 +271,62 @@ function createBook(x, z, title, color) {
     const texture = new THREE.CanvasTexture(labelCanvas);
 
     const label = new THREE.Mesh(
-        new THREE.PlaneGeometry(3.8, 0.95),
+        new THREE.PlaneGeometry(4.8, 1.2),
         new THREE.MeshBasicMaterial({
             map: texture,
             transparent: true
         })
     );
 
-    label.position.set(0, 4.1, 0);
+    label.position.set(0, 5.1, 0);
+
     group.add(label);
 
     group.position.set(x, 0, z);
+    group.rotation.y = rotationY;
 
     scene.add(group);
 
     books.push({
-        object: book,
-        title: title
+        group: group,
+        book: book,
+        material: book.material,
+        title: title,
+        baseColor: color
     });
 
 }
 
-createBook(-30, -18, "MATHEMATICS", 0x4169a1);
-createBook(-30, 0, "SCIENCE", 0x3f8f62);
-createBook(-30, 18, "SOCIAL SCIENCE", 0x9b633f);
+createBook(-45.5, -17, "MATHEMATICS", 0x4169a1, Math.PI / 2);
+createBook(-45.5, 0, "SCIENCE", 0x3f8f62, Math.PI / 2);
+createBook(-45.5, 17, "SOCIAL SCIENCE", 0x9b633f, Math.PI / 2);
 
-createBook(10, -22, "ENGLISH", 0x7b4fa3);
-createBook(10, 0, "COMPUTER SCIENCE", 0x3c7f91);
-createBook(10, 22, "ART & CULTURE", 0xb05b55);
+createBook(45.5, -17, "ENGLISH", 0x7b4fa3, -Math.PI / 2);
+createBook(45.5, 0, "COMPUTER SCIENCE", 0x3c7f91, -Math.PI / 2);
+createBook(45.5, 17, "ART & CULTURE", 0xb05b55, -Math.PI / 2);
 
 const crosshair = document.getElementById("crosshair");
+const bookPrompt = document.getElementById("bookPrompt");
+
 const welcomeScreen = document.getElementById("welcomeScreen");
 const pauseMenu = document.getElementById("pauseMenu");
+
 const startButton = document.getElementById("startButton");
 const resumeButton = document.getElementById("resumeButton");
 const exitButton = document.getElementById("exitButton");
+
 const mobileMenuButton = document.getElementById("mobileMenuButton");
-const interactButton = document.getElementById("interactButton");
 
 let yaw = 0;
 let pitch = 0;
 let experienceStarted = false;
 
+let targetedBook = null;
+
 const playerRadius = 0.45;
+const interactionDistance = 7;
+
+const raycaster = new THREE.Raycaster();
 
 function updateInterface() {
 
@@ -325,6 +338,11 @@ function updateInterface() {
 
     pauseMenu.style.display =
         experienceStarted && !playing ? "flex" : "none";
+
+    if (!playing) {
+        bookPrompt.style.display = "none";
+        targetedBook = null;
+    }
 
 }
 
@@ -346,7 +364,9 @@ function startExperience() {
 startButton.addEventListener("click", startExperience);
 
 resumeButton.addEventListener("click", () => {
+
     document.body.requestPointerLock();
+
 });
 
 exitButton.addEventListener("click", () => {
@@ -356,7 +376,9 @@ exitButton.addEventListener("click", () => {
     experienceStarted = false;
 
     pauseMenu.style.display = "none";
+    bookPrompt.style.display = "none";
     crosshair.style.display = "none";
+
     welcomeScreen.style.display = "flex";
 
     camera.position.set(0, 1.6, 15);
@@ -368,9 +390,7 @@ exitButton.addEventListener("click", () => {
 
 mobileMenuButton.addEventListener("click", () => {
 
-    if (experienceStarted) {
-        document.exitPointerLock();
-    }
+    document.exitPointerLock();
 
 });
 
@@ -388,10 +408,25 @@ window.addEventListener("keydown", (e) => {
 
     }
 
+    if (
+        e.key.toLowerCase() === "e" &&
+        targetedBook &&
+        experienceStarted
+    ) {
+
+        console.log(
+            "Opening book:",
+            targetedBook.title
+        );
+
+    }
+
 });
 
 window.addEventListener("keyup", (e) => {
+
     keys[e.key.toLowerCase()] = false;
+
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -450,30 +485,87 @@ function movePlayer(dx, dz) {
 
 }
 
-const raycaster = new THREE.Raycaster();
+function findTargetedBook() {
 
-function checkBookInteraction() {
+    targetedBook = null;
 
     if (!experienceStarted) return;
+
+    if (document.pointerLockElement !== document.body) return;
 
     raycaster.setFromCamera(
         new THREE.Vector2(0, 0),
         camera
     );
 
-    const objects = books.map(book => book.object);
+    const bookMeshes = books.map(item => item.book);
 
-    const hits = raycaster.intersectObjects(objects);
+    const hits = raycaster.intersectObjects(
+        bookMeshes,
+        false
+    );
 
-    if (hits.length > 0 && hits[0].distance < 6) {
+    if (hits.length === 0) {
 
-        interactButton.style.display = "block";
+        bookPrompt.style.display = "none";
 
-    } else {
-
-        interactButton.style.display = "none";
+        return;
 
     }
+
+    const hit = hits[0];
+
+    if (hit.distance > interactionDistance) {
+
+        bookPrompt.style.display = "none";
+
+        return;
+
+    }
+
+    const bookData = books.find(
+        item => item.book === hit.object
+    );
+
+    if (!bookData) return;
+
+    targetedBook = bookData;
+
+    bookPrompt.style.display = "block";
+
+}
+
+function updateBookHighlight() {
+
+    books.forEach((item) => {
+
+        if (item === targetedBook) {
+
+            item.material.color.setHex(
+                item.baseColor
+            );
+
+            item.book.scale.set(
+                1.08,
+                1.08,
+                1.08
+            );
+
+        } else {
+
+            item.material.color.setHex(
+                item.baseColor
+            );
+
+            item.book.scale.set(
+                1,
+                1,
+                1
+            );
+
+        }
+
+    });
 
 }
 
@@ -528,7 +620,8 @@ function animate() {
 
     }
 
-    checkBookInteraction();
+    findTargetedBook();
+    updateBookHighlight();
 
     renderer.render(scene, camera);
 
