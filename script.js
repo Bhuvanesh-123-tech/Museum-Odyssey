@@ -88,7 +88,7 @@ scene.add(wall4AboveExit);
 const ceiling = new THREE.Mesh(
     new THREE.BoxGeometry(100, 1, 60),
     new THREE.MeshBasicMaterial({
-        color: 0x2b2b2b
+        color: 0x20242a
     })
 );
 
@@ -98,7 +98,7 @@ scene.add(ceiling);
 const ceilingRail = new THREE.Mesh(
     new THREE.BoxGeometry(30, 0.4, 2),
     new THREE.MeshBasicMaterial({
-        color: 0x181818
+        color: 0x101317
     })
 );
 
@@ -156,7 +156,6 @@ function createPortrait(z) {
     panel.position.set(-49.05, 4, z);
     panel.rotation.y = Math.PI / 2;
     scene.add(panel);
-
 }
 
 createPortrait(-15);
@@ -217,93 +216,191 @@ scene.add(doorRight);
 
 const books = [];
 
-function createBook(x, z, title, color, rotationY) {
+function createBook(x, z, title, bookColor, side) {
 
-    const group = new THREE.Group();
+    const exhibit = new THREE.Group();
 
-    const book = new THREE.Mesh(
-        new THREE.BoxGeometry(2.4, 3.2, 0.7),
+    exhibit.position.set(x, 0, z);
+
+    if (side === "back") {
+        exhibit.rotation.y = Math.PI;
+    }
+
+    scene.add(exhibit);
+
+    const table = new THREE.Group();
+
+    table.position.y = 0.05;
+
+    exhibit.add(table);
+
+    const tableBase = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.7, 1.9, 0.45, 6),
         new THREE.MeshBasicMaterial({
-            color: color
+            color: 0x17202b
         })
     );
 
-    book.position.y = 2.4;
+    tableBase.position.y = 0.25;
+    table.add(tableBase);
 
-    group.add(book);
+    const tableTop = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.35, 1.55, 0.3, 6),
+        new THREE.MeshBasicMaterial({
+            color: 0x263747
+        })
+    );
+
+    tableTop.position.y = 0.62;
+    table.add(tableTop);
+
+    const centralCore = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.42, 0.55, 1.5, 8),
+        new THREE.MeshBasicMaterial({
+            color: 0x344b60
+        })
+    );
+
+    centralCore.position.y = 1.25;
+    table.add(centralCore);
+
+    const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(1.05, 0.06, 8, 32),
+        new THREE.MeshBasicMaterial({
+            color: 0xa7c7df
+        })
+    );
+
+    ring.rotation.x = Math.PI / 2;
+    ring.position.y = 0.82;
+    table.add(ring);
+
+    const bookGroup = new THREE.Group();
+
+    bookGroup.position.y = 2.15;
+
+    exhibit.add(bookGroup);
+
+    const coverMaterial = new THREE.MeshBasicMaterial({
+        color: bookColor
+    });
+
+    const pageMaterial = new THREE.MeshBasicMaterial({
+        color: 0xf4ead8
+    });
+
+    const backCover = new THREE.Mesh(
+        new THREE.BoxGeometry(2.8, 0.16, 3.8),
+        coverMaterial
+    );
+
+    backCover.position.y = 0;
+    bookGroup.add(backCover);
+
+    const leftPage = new THREE.Mesh(
+        new THREE.BoxGeometry(1.35, 0.08, 3.55),
+        pageMaterial
+    );
+
+    leftPage.position.set(-0.68, 0.12, 0);
+    leftPage.rotation.z = 0;
+    bookGroup.add(leftPage);
+
+    const rightPage = new THREE.Mesh(
+        new THREE.BoxGeometry(1.35, 0.08, 3.55),
+        pageMaterial
+    );
+
+    rightPage.position.set(0.68, 0.12, 0);
+    rightPage.rotation.z = 0;
+    bookGroup.add(rightPage);
+
+    const frontCoverLeft = new THREE.Mesh(
+        new THREE.BoxGeometry(1.4, 0.12, 3.8),
+        coverMaterial
+    );
+
+    frontCoverLeft.position.set(-0.7, 0.2, 0);
+    bookGroup.add(frontCoverLeft);
+
+    const frontCoverRight = new THREE.Mesh(
+        new THREE.BoxGeometry(1.4, 0.12, 3.8),
+        coverMaterial
+    );
+
+    frontCoverRight.position.set(0.7, 0.2, 0);
+    bookGroup.add(frontCoverRight);
 
     const spine = new THREE.Mesh(
-        new THREE.BoxGeometry(0.3, 3.2, 0.8),
+        new THREE.BoxGeometry(0.18, 0.35, 3.9),
         new THREE.MeshBasicMaterial({
-            color: 0x21150f
+            color: 0x101820
         })
     );
 
-    spine.position.set(-1.25, 2.4, 0);
-    group.add(spine);
+    spine.position.y = 0.18;
+    bookGroup.add(spine);
 
-    const cover = new THREE.Mesh(
-        new THREE.BoxGeometry(2.5, 0.12, 0.82),
-        new THREE.MeshBasicMaterial({
-            color: 0xf3e4c8
-        })
-    );
+    const titleCanvas = document.createElement("canvas");
 
-    cover.position.set(0, 4.03, 0);
-    group.add(cover);
+    titleCanvas.width = 512;
+    titleCanvas.height = 128;
 
-    const labelCanvas = document.createElement("canvas");
+    const context = titleCanvas.getContext("2d");
 
-    labelCanvas.width = 512;
-    labelCanvas.height = 128;
-
-    const context = labelCanvas.getContext("2d");
-
-    context.fillStyle = "#fff8ee";
-    context.fillRect(0, 0, 512, 128);
-
-    context.fillStyle = "#222222";
-    context.font = "bold 38px Arial";
+    context.fillStyle = "#eef6ff";
+    context.font = "bold 36px Arial";
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(title, 256, 64);
 
-    const texture = new THREE.CanvasTexture(labelCanvas);
+    const titleTexture = new THREE.CanvasTexture(titleCanvas);
 
-    const label = new THREE.Mesh(
-        new THREE.PlaneGeometry(4.8, 1.2),
+    const titleLabel = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.2, 0.8),
         new THREE.MeshBasicMaterial({
-            map: texture,
-            transparent: true
+            map: titleTexture,
+            transparent: true,
+            side: THREE.DoubleSide
         })
     );
 
-    label.position.set(0, 5.1, 0);
+    titleLabel.position.set(0, 0.38, 0);
+    titleLabel.rotation.x = -Math.PI / 2;
+    bookGroup.add(titleLabel);
 
-    group.add(label);
+    const crystal = new THREE.Mesh(
+        new THREE.OctahedronGeometry(0.22),
+        new THREE.MeshBasicMaterial({
+            color: 0xc7e7ff
+        })
+    );
 
-    group.position.set(x, 0, z);
-    group.rotation.y = rotationY;
-
-    scene.add(group);
+    crystal.position.y = 1.15;
+    table.add(crystal);
 
     books.push({
-        group: group,
-        book: book,
-        material: book.material,
-        title: title,
-        baseColor: color
+        exhibit,
+        bookGroup,
+        leftPage,
+        rightPage,
+        frontCoverLeft,
+        frontCoverRight,
+        title,
+        open: false,
+        animating: false,
+        animation: 0,
+        phase: Math.random() * Math.PI * 2
     });
-
 }
 
-createBook(-45.5, -17, "MATHEMATICS", 0x4169a1, Math.PI / 2);
-createBook(-45.5, 0, "SCIENCE", 0x3f8f62, Math.PI / 2);
-createBook(-45.5, 17, "SOCIAL SCIENCE", 0x9b633f, Math.PI / 2);
+createBook(-20, -29.15, "MATHEMATICS", 0x385b82, "back");
+createBook(0, -29.15, "SCIENCE", 0x356b55, "back");
+createBook(20, -29.15, "SOCIAL SCIENCE", 0x76533c, "back");
 
-createBook(45.5, -17, "ENGLISH", 0x7b4fa3, -Math.PI / 2);
-createBook(45.5, 0, "COMPUTER SCIENCE", 0x3c7f91, -Math.PI / 2);
-createBook(45.5, 17, "ART & CULTURE", 0xb05b55, -Math.PI / 2);
+createBook(-20, 29.15, "ENGLISH", 0x60457e, "front");
+createBook(0, 29.15, "COMPUTER SCIENCE", 0x365f70, "front");
+createBook(20, 29.15, "ART & CULTURE", 0x75494a, "front");
 
 const crosshair = document.getElementById("crosshair");
 const bookPrompt = document.getElementById("bookPrompt");
@@ -315,16 +412,13 @@ const startButton = document.getElementById("startButton");
 const resumeButton = document.getElementById("resumeButton");
 const exitButton = document.getElementById("exitButton");
 
-const mobileMenuButton = document.getElementById("mobileMenuButton");
-
 let yaw = 0;
 let pitch = 0;
 let experienceStarted = false;
-
 let targetedBook = null;
 
 const playerRadius = 0.45;
-const interactionDistance = 7;
+const interactionDistance = 6;
 
 const raycaster = new THREE.Raycaster();
 
@@ -343,7 +437,6 @@ function updateInterface() {
         bookPrompt.style.display = "none";
         targetedBook = null;
     }
-
 }
 
 function startExperience() {
@@ -358,15 +451,12 @@ function startExperience() {
     pitch = 0;
 
     document.body.requestPointerLock();
-
 }
 
 startButton.addEventListener("click", startExperience);
 
 resumeButton.addEventListener("click", () => {
-
     document.body.requestPointerLock();
-
 });
 
 exitButton.addEventListener("click", () => {
@@ -385,13 +475,6 @@ exitButton.addEventListener("click", () => {
 
     yaw = 0;
     pitch = 0;
-
-});
-
-mobileMenuButton.addEventListener("click", () => {
-
-    document.exitPointerLock();
-
 });
 
 document.addEventListener("pointerlockchange", updateInterface);
@@ -405,28 +488,21 @@ window.addEventListener("keydown", (e) => {
         Object.keys(keys).forEach((key) => {
             keys[key] = false;
         });
-
     }
 
     if (
         e.key.toLowerCase() === "e" &&
         targetedBook &&
-        experienceStarted
+        !targetedBook.animating
     ) {
 
-        console.log(
-            "Opening book:",
-            targetedBook.title
-        );
-
+        targetedBook.open = !targetedBook.open;
+        targetedBook.animating = true;
     }
-
 });
 
 window.addEventListener("keyup", (e) => {
-
     keys[e.key.toLowerCase()] = false;
-
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -434,14 +510,12 @@ document.addEventListener("mousemove", (e) => {
     if (document.pointerLockElement !== document.body) return;
 
     yaw -= e.movementX * 0.002;
-
     pitch -= e.movementY * 0.002;
 
     pitch = Math.max(
         -Math.PI / 2,
         Math.min(Math.PI / 2, pitch)
     );
-
 });
 
 function canMove(x, z) {
@@ -463,11 +537,9 @@ function canMove(x, z) {
         if (z < -9.5 || z > 9.5) {
             return false;
         }
-
     }
 
     return true;
-
 }
 
 function movePlayer(dx, dz) {
@@ -482,7 +554,6 @@ function movePlayer(dx, dz) {
     if (canMove(camera.position.x, newZ)) {
         camera.position.z = newZ;
     }
-
 }
 
 function findTargetedBook() {
@@ -498,11 +569,11 @@ function findTargetedBook() {
         camera
     );
 
-    const bookMeshes = books.map(item => item.book);
+    const targets = books.map(item => item.bookGroup);
 
     const hits = raycaster.intersectObjects(
-        bookMeshes,
-        false
+        targets,
+        true
     );
 
     if (hits.length === 0) {
@@ -510,7 +581,6 @@ function findTargetedBook() {
         bookPrompt.style.display = "none";
 
         return;
-
     }
 
     const hit = hits[0];
@@ -520,56 +590,89 @@ function findTargetedBook() {
         bookPrompt.style.display = "none";
 
         return;
-
     }
 
-    const bookData = books.find(
-        item => item.book === hit.object
+    const bookData = books.find(item =>
+        item.bookGroup === hit.object ||
+        item.bookGroup.children.includes(hit.object)
     );
 
-    if (!bookData) return;
+    if (!bookData) {
+
+        bookPrompt.style.display = "none";
+
+        return;
+    }
 
     targetedBook = bookData;
 
     bookPrompt.style.display = "block";
-
 }
 
-function updateBookHighlight() {
+function updateBooks(time) {
 
     books.forEach((item) => {
 
-        if (item === targetedBook) {
+        const floatHeight =
+            Math.sin(time * 0.0012 + item.phase) * 0.08;
 
-            item.material.color.setHex(
-                item.baseColor
-            );
+        item.bookGroup.position.y =
+            2.15 + floatHeight;
 
-            item.book.scale.set(
-                1.08,
-                1.08,
-                1.08
-            );
+        item.bookGroup.rotation.y =
+            Math.sin(time * 0.0005 + item.phase) * 0.025;
 
-        } else {
+        if (item.animating) {
 
-            item.material.color.setHex(
-                item.baseColor
-            );
+            if (item.open) {
 
-            item.book.scale.set(
-                1,
-                1,
-                1
-            );
+                item.animation += 0.035;
 
+                if (item.animation >= 1) {
+                    item.animation = 1;
+                    item.animating = false;
+                }
+
+            } else {
+
+                item.animation -= 0.035;
+
+                if (item.animation <= 0) {
+                    item.animation = 0;
+                    item.animating = false;
+                }
+            }
+
+            const amount = item.animation;
+
+            item.frontCoverLeft.rotation.z =
+                amount * 0.85;
+
+            item.frontCoverRight.rotation.z =
+                -amount * 0.85;
+
+            item.leftPage.rotation.z =
+                amount * 0.75;
+
+            item.rightPage.rotation.z =
+                -amount * 0.75;
+
+            item.frontCoverLeft.position.x =
+                -0.7 - amount * 0.35;
+
+            item.frontCoverRight.position.x =
+                0.7 + amount * 0.35;
+
+            item.leftPage.position.x =
+                -0.68 - amount * 0.25;
+
+            item.rightPage.position.x =
+                0.68 + amount * 0.25;
         }
-
     });
-
 }
 
-function animate() {
+function animate(time) {
 
     requestAnimationFrame(animate);
 
@@ -589,47 +692,37 @@ function animate() {
         let dz = 0;
 
         if (keys["w"]) {
-
             dx -= Math.sin(yaw) * speed;
             dz -= Math.cos(yaw) * speed;
-
         }
 
         if (keys["s"]) {
-
             dx += Math.sin(yaw) * speed;
             dz += Math.cos(yaw) * speed;
-
         }
 
         if (keys["a"]) {
-
             dx -= Math.cos(yaw) * speed;
             dz += Math.sin(yaw) * speed;
-
         }
 
         if (keys["d"]) {
-
             dx += Math.cos(yaw) * speed;
             dz -= Math.sin(yaw) * speed;
-
         }
 
         movePlayer(dx, dz);
-
     }
 
     findTargetedBook();
-    updateBookHighlight();
+    updateBooks(time);
 
     renderer.render(scene, camera);
-
 }
 
 camera.position.set(0, 1.6, 15);
 
-animate();
+animate(0);
 updateInterface();
 
 window.addEventListener("resize", () => {
@@ -643,5 +736,4 @@ window.addEventListener("resize", () => {
         window.innerWidth,
         window.innerHeight
     );
-
 });
