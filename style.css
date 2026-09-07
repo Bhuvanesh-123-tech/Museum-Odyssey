@@ -80,6 +80,26 @@ button {
     display: none;
 }
 
+#bookPrompt {
+    position: fixed;
+    right: 35px;
+    bottom: 35px;
+    padding: 14px 20px;
+    background: rgba(20, 20, 20, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9px;
+    color: white;
+    font-size: 1rem;
+    display: none;
+    z-index: 40;
+    pointer-events: none;
+}
+
+#bookPrompt strong {
+    color: #ffe8b0;
+    font-size: 1.1rem;
+}
+
 #pauseMenu {
     position: fixed;
     inset: 0;
@@ -170,7 +190,6 @@ button {
     padding: 15px 25px;
     background: rgba(255, 255, 255, 0.9);
     color: #222;
-    display: none;
     font-size: 1rem;
 }
 
